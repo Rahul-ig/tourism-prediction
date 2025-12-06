@@ -17,10 +17,10 @@ mlflow.set_experiment("tourism_package_prediction")
 
 # Load train and test data from Hugging Face using hf:// format
 print("Loading data from Hugging Face...")
-X_train = pd.read_csv("hf://datasets/RahulSingh211/tourism_train_data/Xtrain.csv")
-y_train = pd.read_csv("hf://datasets/RahulSingh211/tourism_train_data/ytrain.csv")
-X_test = pd.read_csv("hf://datasets/RahulSingh211/tourism_test_data/Xtest.csv")
-y_test = pd.read_csv("hf://datasets/RahulSingh211/tourism_test_data/ytest.csv")
+X_train = pd.read_csv("hf://datasets/RahulSingh211/TourismPackagePrediction/Xtrain.csv")
+y_train = pd.read_csv("hf://datasets/RahulSingh211/TourismPackagePrediction/ytrain.csv")
+X_test = pd.read_csv("hf://datasets/RahulSingh211/TourismPackagePrediction/Xtest.csv")
+y_test = pd.read_csv("hf://datasets/RahulSingh211/TourismPackagePrediction/ytest.csv")
 
 # If y columns are DataFrames, convert to Series
 if isinstance(y_train, pd.DataFrame):
@@ -169,7 +169,7 @@ print("\nModel and preprocessing objects saved locally!")
 api = HfApi(token=os.getenv("HF_TOKEN"))
 
 # Create model repository if it doesn't exist
-model_repo_id = "RahulSingh211/tourism_model"
+model_repo_id = "RahulSingh211/TourismPackagePrediction"
 
 try:
     api.repo_info(repo_id=model_repo_id, repo_type="model")
@@ -201,6 +201,6 @@ api.upload_file(
     repo_type="model"
 )
 
-print("✅ Model successfully uploaded to Hugging Face Model Hub!")
+print("Model successfully uploaded to Hugging Face Model Hub!")
 
 print("\nModel training and registration completed!")

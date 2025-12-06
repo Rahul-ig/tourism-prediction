@@ -24,17 +24,17 @@ def load_model_artifacts():
     try:
         # Download from Hugging Face
         model_path = hf_hub_download(
-            repo_id="RahulSingh211/tourism_model",
+            repo_id="RahulSingh211/TourismPackagePrediction",
             filename="best_model.pkl",
             repo_type="model"
         )
         scaler_path = hf_hub_download(
-            repo_id="RahulSingh211/tourism_model",
+            repo_id="RahulSingh211/TourismPackagePrediction",
             filename="scaler.pkl",
             repo_type="model"
         )
         encoders_path = hf_hub_download(
-            repo_id="RahulSingh211/tourism_model",
+            repo_id="RahulSingh211/TourismPackagePrediction",
             filename="label_encoders.pkl",
             repo_type="model"
         )

@@ -5,7 +5,7 @@ from huggingface_hub.utils import RepositoryNotFoundError
 import os
 
 # Define the dataset path using hf:// format
-DATASET_PATH = "hf://datasets/RahulSingh211/tourism_dataset/tourism.csv"
+DATASET_PATH = "hf://datasets/RahulSingh211/TourismPackagePrediction/tourism.csv"
 
 # Load dataset from Hugging Face
 print("Loading dataset from Hugging Face...")
@@ -57,8 +57,8 @@ print("Data split and saved locally!")
 api = HfApi(token=os.getenv("HF_TOKEN"))
 
 # Define repository details for train data
-train_repo_id = "RahulSingh211/tourism_train_data"
-test_repo_id = "RahulSingh211/tourism_test_data"
+train_repo_id = "RahulSingh211/TourismPackagePrediction"
+test_repo_id = "RahulSingh211/TourismPackagePrediction"
 
 # Create repositories if they don't exist
 for repo_id in [train_repo_id, test_repo_id]:

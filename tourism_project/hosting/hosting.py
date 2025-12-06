@@ -5,7 +5,7 @@ import os
 api = HfApi()
 
 # Define repository details
-SPACE_REPO_ID = "RahulSingh211/tourism-prediction-app"
+SPACE_REPO_ID = "RahulSingh211/TourismPackagePrediction"
 HF_TOKEN = os.environ.get('HF_TOKEN')
 
 # Create Hugging Face Space (if it doesn't exist)

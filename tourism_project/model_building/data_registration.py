@@ -7,7 +7,7 @@ import os
 api = HfApi(token=os.getenv("HF_TOKEN"))
 
 # Define repository details
-repo_id = "RahulSingh211/tourism_dataset"
+repo_id = "RahulSingh211/TourismPackagePrediction"
 repo_type = "dataset"
 
 # Create repository if it doesn't exist
