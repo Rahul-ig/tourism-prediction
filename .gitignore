@@ -27,6 +27,11 @@ wheels/
 mlruns/
 mlartifacts/
 
+# Generated model files and processed data (created by pipeline)
+tourism_project/model_building/models/
+tourism_project/model_building/preprocessing/
+tourism_project/model_building/processed_data/
+
 # Jupyter Notebook
 .ipynb_checkpoints
 
