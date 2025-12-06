@@ -23,7 +23,7 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          python tourism_project/data/data_registration.py
+          python tourism_project/model_building/data_registration.py
 
   data-prep:
     needs: register-dataset
@@ -84,4 +84,4 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          python tourism_project/deployment/hosting.py
+          python tourism_project/hosting/hosting.py
