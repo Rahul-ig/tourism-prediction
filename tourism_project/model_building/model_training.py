@@ -1,36 +1,35 @@
 import pandas as pd
 import numpy as np
-from datasets import load_dataset
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from xgboost import XGBClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, confusion_matrix
 import mlflow
 import mlflow.sklearn
-from huggingface_hub import HfApi
-import pickle
+from huggingface_hub import HfApi, create_repo
+from huggingface_hub.utils import RepositoryNotFoundError
+import joblib
 import os
 
 # Set MLflow tracking URI
 mlflow.set_tracking_uri("http://0.0.0.0:5000")
 mlflow.set_experiment("tourism_package_prediction")
 
-# Load train and test data from Hugging Face
+# Load train and test data from Hugging Face using hf:// format
 print("Loading data from Hugging Face...")
-train_dataset = load_dataset("RahulSingh211/tourism_train_data", split="train")
-test_dataset = load_dataset("RahulSingh211/tourism_test_data", split="train")
+X_train = pd.read_csv("hf://datasets/RahulSingh211/tourism_train_data/Xtrain.csv")
+y_train = pd.read_csv("hf://datasets/RahulSingh211/tourism_train_data/ytrain.csv")
+X_test = pd.read_csv("hf://datasets/RahulSingh211/tourism_test_data/Xtest.csv")
+y_test = pd.read_csv("hf://datasets/RahulSingh211/tourism_test_data/ytest.csv")
 
-train_df = train_dataset.to_pandas()
-test_df = test_dataset.to_pandas()
+# If y columns are DataFrames, convert to Series
+if isinstance(y_train, pd.DataFrame):
+    y_train = y_train.iloc[:, 0]
+if isinstance(y_test, pd.DataFrame):
+    y_test = y_test.iloc[:, 0]
 
-print(f"Train shape: {train_df.shape}")
-print(f"Test shape: {test_df.shape}")
-
-# Separate features and target
-X_train = train_df.drop('ProdTaken', axis=1)
-y_train = train_df['ProdTaken']
-X_test = test_df.drop('ProdTaken', axis=1)
-y_test = test_df['ProdTaken']
+print(f"Train shape: {X_train.shape}")
+print(f"Test shape: {X_test.shape}")
 
 # Encode categorical variables
 categorical_cols = X_train.select_dtypes(include=['object']).columns
@@ -159,54 +158,49 @@ print(f"{'='*50}")
 # Save the best model and preprocessing objects locally
 os.makedirs("tourism_project/models", exist_ok=True)
 
-with open("tourism_project/models/best_model.pkl", "wb") as f:
-    pickle.dump(best_model, f)
-
-with open("tourism_project/models/scaler.pkl", "wb") as f:
-    pickle.dump(scaler, f)
-
-with open("tourism_project/models/label_encoders.pkl", "wb") as f:
-    pickle.dump(label_encoders, f)
+# Use joblib for saving models (better for scikit-learn models)
+joblib.dump(best_model, "tourism_project/models/best_model.pkl")
+joblib.dump(scaler, "tourism_project/models/scaler.pkl")
+joblib.dump(label_encoders, "tourism_project/models/label_encoders.pkl")
 
 print("\nModel and preprocessing objects saved locally!")
 
-# Upload to Hugging Face Model Hub
-api = HfApi()
+# Initialize HuggingFace API
+api = HfApi(token=os.getenv("HF_TOKEN"))
+
+# Create model repository if it doesn't exist
+model_repo_id = "RahulSingh211/tourism_model"
 
 try:
-    api.create_repo(
-        repo_id="RahulSingh211/tourism_model",
-        repo_type="model",
-        token=os.environ['HF_TOKEN'],
-        exist_ok=True
-    )
+    api.repo_info(repo_id=model_repo_id, repo_type="model")
+    print(f"Repository {model_repo_id} already exists.")
+except RepositoryNotFoundError:
+    print(f"Creating repository {model_repo_id}...")
+    create_repo(repo_id=model_repo_id, repo_type="model", token=os.getenv("HF_TOKEN"))
 
-    api.upload_file(
-        path_or_fileobj="tourism_project/models/best_model.pkl",
-        path_in_repo="best_model.pkl",
-        repo_id="RahulSingh211/tourism_model",
-        repo_type="model",
-        token=os.environ['HF_TOKEN']
-    )
+# Upload model files to Hugging Face
+print("Uploading model files to Hugging Face...")
+api.upload_file(
+    path_or_fileobj="tourism_project/models/best_model.pkl",
+    path_in_repo="best_model.pkl",
+    repo_id=model_repo_id,
+    repo_type="model"
+)
 
-    api.upload_file(
-        path_or_fileobj="tourism_project/models/scaler.pkl",
-        path_in_repo="scaler.pkl",
-        repo_id="RahulSingh211/tourism_model",
-        repo_type="model",
-        token=os.environ['HF_TOKEN']
-    )
+api.upload_file(
+    path_or_fileobj="tourism_project/models/scaler.pkl",
+    path_in_repo="scaler.pkl",
+    repo_id=model_repo_id,
+    repo_type="model"
+)
 
-    api.upload_file(
-        path_or_fileobj="tourism_project/models/label_encoders.pkl",
-        path_in_repo="label_encoders.pkl",
-        repo_id="RahulSingh211/tourism_model",
-        repo_type="model",
-        token=os.environ['HF_TOKEN']
-    )
+api.upload_file(
+    path_or_fileobj="tourism_project/models/label_encoders.pkl",
+    path_in_repo="label_encoders.pkl",
+    repo_id=model_repo_id,
+    repo_type="model"
+)
 
-    print("Model successfully uploaded to Hugging Face Model Hub!")
-except Exception as e:
-    print(f"Error uploading to Hugging Face: {e}")
+print("✅ Model successfully uploaded to Hugging Face Model Hub!")
 
 print("\nModel training and registration completed!")

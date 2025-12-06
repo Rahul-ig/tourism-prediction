@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import pickle
+import joblib
 from huggingface_hub import hf_hub_download
 import os
 
@@ -39,12 +39,10 @@ def load_model_artifacts():
             repo_type="model"
         )
 
-        with open(model_path, 'rb') as f:
-            model = pickle.load(f)
-        with open(scaler_path, 'rb') as f:
-            scaler = pickle.load(f)
-        with open(encoders_path, 'rb') as f:
-            label_encoders = pickle.load(f)
+        # Use joblib to load the models
+        model = joblib.load(model_path)
+        scaler = joblib.load(scaler_path)
+        label_encoders = joblib.load(encoders_path)
 
         return model, scaler, label_encoders
     except Exception as e:
