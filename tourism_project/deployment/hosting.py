@@ -4,6 +4,7 @@ Script to deploy tourism prediction model to Hugging Face Spaces
 import os
 from huggingface_hub import HfApi, create_repo
 import shutil
+import tempfile
 
 def create_app_file():
     """Create Streamlit app file"""
@@ -139,8 +140,7 @@ def push_to_hugging_face():
         print(f"Space {space_id} created/verified successfully")
         
         # Create temporary directory for app files
-        temp_dir = "/tmp/tourism_app"
-        os.makedirs(temp_dir, exist_ok=True)
+        temp_dir = tempfile.mkdtemp(prefix="tourism_app_")
         
         # Create app.py
         with open(os.path.join(temp_dir, "app.py"), "w") as f:

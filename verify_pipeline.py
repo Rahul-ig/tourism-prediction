@@ -13,9 +13,10 @@ def run_command(cmd, description, timeout=30):
     print(f"{'='*60}")
     
     try:
+        # Split command into list for better security
+        cmd_list = cmd.split() if isinstance(cmd, str) else cmd
         result = subprocess.run(
-            cmd,
-            shell=True,
+            cmd_list,
             capture_output=True,
             text=True,
             timeout=timeout

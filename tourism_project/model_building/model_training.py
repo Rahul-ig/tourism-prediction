@@ -29,14 +29,15 @@ def train_model(X_train, X_test, y_train, y_test):
     
     # Check if MLflow server is available
     mlflow_enabled = False
+    mlflow_uri = os.environ.get("MLFLOW_TRACKING_URI", "http://localhost:5000")
     try:
         import requests
-        response = requests.get("http://localhost:5000", timeout=2)
+        response = requests.get(mlflow_uri, timeout=2)
         if response.status_code == 200:
-            mlflow.set_tracking_uri("http://localhost:5000")
+            mlflow.set_tracking_uri(mlflow_uri)
             mlflow.set_experiment("tourism-prediction")
             mlflow_enabled = True
-            print("MLflow tracking enabled")
+            print(f"MLflow tracking enabled at {mlflow_uri}")
     except Exception as e:
         print(f"MLflow server not available, proceeding without tracking: {e}")
         mlflow_enabled = False
