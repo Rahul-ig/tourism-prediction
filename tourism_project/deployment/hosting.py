@@ -109,10 +109,10 @@ The model uses a Random Forest Classifier trained on historical tourism data.
 
 def create_requirements():
     """Create requirements file for the app"""
-    requirements = '''streamlit==1.28.0
-scikit-learn==1.3.0
-numpy==1.24.3
-pandas==2.0.3
+    requirements = '''streamlit>=1.28.0
+scikit-learn>=1.3.0
+numpy>=1.24.0
+pandas>=2.0.0
 '''
     return requirements
 

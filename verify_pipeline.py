@@ -6,7 +6,7 @@ import os
 import sys
 import subprocess
 
-def run_command(cmd, description):
+def run_command(cmd, description, timeout=30):
     """Run a command and return success status"""
     print(f"\n{'='*60}")
     print(f"Testing: {description}")
@@ -18,7 +18,7 @@ def run_command(cmd, description):
             shell=True,
             capture_output=True,
             text=True,
-            timeout=60
+            timeout=timeout
         )
         
         print(result.stdout)
